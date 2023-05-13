@@ -26,16 +26,20 @@ syntax analyzer:
 */
 
 class Node {
+private:
 	Node* parent;
 
 	std::list<Node*> children;
 
+public:
 	enum {
 		DEF,
 		VAR,
 		OPER,
 		LSTR
 	} type;
+
+	
 }
 
 
