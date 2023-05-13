@@ -38,8 +38,6 @@ public:
 		OPER,
 		LSTR
 	} type;
-
-	
 }
 
 
