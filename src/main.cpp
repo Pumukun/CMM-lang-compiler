@@ -1,5 +1,7 @@
 #include <iostream>
 
+#include "Lexer.hpp"
+
 using namespace std;
 
 int main() {
