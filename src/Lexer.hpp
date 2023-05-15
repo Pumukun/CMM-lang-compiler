@@ -12,6 +12,13 @@
 
 using namespace std;
 
+template<typename FIRST, typename SECOND, typename THIRD> 
+struct trio {
+	FIRST first;
+	SECOND second;
+	THIRD third;
+};
+
 class Lexer {
 public:
 
@@ -155,24 +162,55 @@ public:
 
 		int pos = 0;
 		Token token;
+
+		string cur_type;
+
 		do {
 			token = next_token(file_contents, pos);
-			grammar.push_back({token.type, token.lexeme});
+			switch (token.type) {
+			case KEYWORD:
+				cur_type = "KEYWORD";
+				break;
+			case IDENTIFIER:
+				cur_type = "IDENTIFIER";
+				break;
+			case INTEGER:
+				cur_type = "INTEGER";
+				break;
+			case STRING:
+				cur_type = "STRING";
+				break;
+			case OPERATOR:
+				cur_type = "OPERATOR";
+				break;
+			case PUNCTUATION:
+				cur_type = "PUNCTUATION";
+				break;
+			case END:
+				cur_type = "END";
+				break;
+			default:
+				cur_type = "NONE";
+				break;
+			}
+
+			grammar.push_back({token.type, cur_type, token.lexeme});
 		} while (token.lexeme != "");
 
 		grammar.pop_back();
 	}
 
 	void lexer_output() {
-		for (pair<int, string> &i : grammar)
+		for (trio<int, string, string> &i : grammar)
 			cout << "[Type: " << i.first 
-				 << ", Value: " << i.second << "]\n";
+				 << ", Type_str: " << i.second 
+				 << ", Lexeme: " << i.third << "]\n";
 	}
 
-	vector<pair<int, string>> get_grammar() { return grammar; }
+	vector<trio<int, string, string>> get_grammar() { return grammar; }
 
 private:
-	vector<pair<int, string>> grammar;
+	vector<trio<int, string, string>> grammar;
 };
 
 #endif
