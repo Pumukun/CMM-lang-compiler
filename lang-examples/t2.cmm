@@ -1,3 +1,4 @@
 string str
-str = "Hello World"
+str = "Hello World!"
+string str2 = "C-- xd"
 print s

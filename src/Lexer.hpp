@@ -36,7 +36,7 @@ private:
 		string lexeme;
 	};
 
-	unordered_set<string> keywords = {"if", "else", "print", "int", "string"};
+	unordered_set<string> keywords = {"print", "int", "string"};
 
 	bool is_digit(char c) { return c >= '0' && c <= '9'; }
 
@@ -46,10 +46,9 @@ private:
 	
 	bool is_punctuation(char c) { return c == '(' || c == ')'; }
 
-	Token next_token(const string& input, int& pos) {
+	Token next_token(const string &input, int &pos) {
 		Token token;
 		string lexeme;
-		bool is_float = false;
 
 		while (pos < input.length()) {
 			char c = input[pos];
@@ -60,17 +59,15 @@ private:
 			}
 
 			if (c == '\"') {
-				int start_pos = pos + 1;
+				pos++;
 
-				token.type = STRING;
-				token.lexeme = input.substr(start_pos, pos - start_pos);
-				
-				pos++; // Move past closing quote
-				
 				while (pos < input.length() && input[pos] != '\"') {
+					token.lexeme += input[pos];
 					pos++;
-				}	
-
+				}
+				
+				token.type = STRING;
+				pos++;
 				return token;
 			}
 
