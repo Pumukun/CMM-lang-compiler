@@ -22,12 +22,13 @@ public:
 private:
 	 
 	enum TokenType {
-		KEYWORD,	// 0
-		IDENTIFIER, // 1
-		INTEGER,	// 2
-		STRING,		// 3
-		OPERATOR,	// 4
-		END			// 5
+		KEYWORD,		// 0
+		IDENTIFIER,		// 1
+		INTEGER,		// 2
+		STRING,			// 3
+		OPERATOR,		// 4
+		PUNCTUATION,	// 5
+		END				// 6
 	};
 
 	struct Token {
@@ -42,6 +43,8 @@ private:
 	bool is_alpha(char c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
 
 	bool is_operator(char c) { return c == '+' || c == '-' || c == '*' || c == '/' || c == '='; }
+	
+	bool is_punctuation(char c) { return c == '(' || c == ')'; }
 
 	Token next_token(const string& input, int& pos) {
 		Token token;
@@ -50,23 +53,29 @@ private:
 
 		while (pos < input.length()) {
 			char c = input[pos];
+
 			if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
 				pos++;
 				continue;
 			}
+
 			if (c == '\"') {
 				int start_pos = pos + 1;
+
 				while (pos < input.length() && input[pos] != '\"') {
 					pos++;
 				}
+
 				token.type = STRING;
 				token.lexeme = input.substr(start_pos, pos - start_pos);
 				pos++; // Move past closing quote
 				return token;
 			}
+
 			if (is_digit(c)) {
 				lexeme += c;
 				pos++;
+
 				while (pos < input.length() && is_digit(input[pos])) {
 					lexeme += input[pos];
 					pos++;
@@ -76,29 +85,48 @@ private:
 				token.lexeme = lexeme;
 				return token;
 			}
+
 			if (is_alpha(c)) {
 				lexeme += c;
 				pos++;
+
 				while (pos < input.length() && (is_alpha(input[pos]) || is_digit(input[pos]))) {
 					lexeme += input[pos];
 					pos++;
 				}
+
 				if (keywords.find(lexeme) != keywords.end()) {
 					token.type = KEYWORD;
-				} else {
-					token.type = IDENTIFIER;
-				}
+				} else token.type = IDENTIFIER;
+
 				token.lexeme = lexeme;
 				return token;
 			}
+
 			if (is_operator(c)) {
 				lexeme += c;
 				pos++;
+
 				while (pos < input.length() && is_operator(input[pos])) {
 					lexeme += input[pos];
 					pos++;
 				}
+
 				token.type = OPERATOR;
+				token.lexeme = lexeme;
+				return token;
+			}
+
+			if (is_puntuation(c)) {
+				lexeme += c;
+				pos++;
+
+				while (pos < input.length() && is_punctuation(input[pos])) {
+					lexeme += input[pos];
+					pos++
+				}
+
+				token.type = PUNCTUATION;
 				token.lexeme = lexeme;
 				return token;
 			}
