@@ -117,13 +117,13 @@ private:
 				return token;
 			}
 
-			if (is_puntuation(c)) {
+			if (is_punctuation(c)) {
 				lexeme += c;
 				pos++;
 
 				while (pos < input.length() && is_punctuation(input[pos])) {
 					lexeme += input[pos];
-					pos++
+					pos++;
 				}
 
 				token.type = PUNCTUATION;
