@@ -1,11 +1,15 @@
 #include <iostream>
+#include <string>
 
 #include "Lexer.hpp"
 
 using namespace std;
 
 int main() {
-    string file_path = "/home/pumukun/GitHub/LGPP/language_examples/t1.cmm";
+	cout << "Enter file path: ";
+	string file_path;
+	cin >> file_path;
+
 	Lexer lex;
 	
 	lex.generate_grammar(file_path);  

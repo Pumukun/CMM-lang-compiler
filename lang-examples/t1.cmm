@@ -3,4 +3,4 @@ a = 5
 int b
 b = 8
 a = b + 8
-print(a)
+print a

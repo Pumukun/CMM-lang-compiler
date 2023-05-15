@@ -62,13 +62,15 @@ private:
 			if (c == '\"') {
 				int start_pos = pos + 1;
 
-				while (pos < input.length() && input[pos] != '\"') {
-					pos++;
-				}
-
 				token.type = STRING;
 				token.lexeme = input.substr(start_pos, pos - start_pos);
+				
 				pos++; // Move past closing quote
+				
+				while (pos < input.length() && input[pos] != '\"') {
+					pos++;
+				}	
+
 				return token;
 			}
 
