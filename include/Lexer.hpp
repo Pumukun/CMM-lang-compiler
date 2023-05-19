@@ -10,14 +10,9 @@
 #include <sstream>
 #include <string>
 
-using namespace std;
+#include "trio.hpp"
 
-template<typename FIRST, typename SECOND, typename THIRD> 
-struct trio {
-	FIRST first;
-	SECOND second;
-	THIRD third;
-};
+using namespace std;
 
 class Lexer {
 public:
