@@ -4,7 +4,6 @@ SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 
-# Найти все файлы .cpp в папке src и заменить их на соответствующие файлы .o в папке obj
 SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
 
