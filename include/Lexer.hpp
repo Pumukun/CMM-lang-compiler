@@ -151,7 +151,7 @@ public:
 				buffer << line << "\n";
 
 			file.close();
-		} else cout << "Unable to open file";
+		} else cout << "Unable to open file\n";
     
 		string file_contents = buffer.str();
 
