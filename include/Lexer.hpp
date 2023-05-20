@@ -24,8 +24,8 @@ public:
 private:
 	 
 	enum TokenType {
-		KEYWORD,		// 0
-		IDENTIFIER,		// 1
+		PRINT,			// 0
+		VARIABLE,		// 1
 		INTEGER,		// 2
 		STRING,			// 3
 		OPERATOR,		// 4
@@ -38,7 +38,7 @@ private:
 		string lexeme;
 	};
 
-	unordered_set<string> keywords = {"print", "int", "string"};
+	unordered_set<string> keywords = {"print"};
 
 	bool is_digit(char c) { return c >= '0' && c <= '9'; }
 
@@ -52,7 +52,7 @@ private:
 		Token token;
 		string lexeme;
 
-		while (pos < input.length()) {
+		while (pos < (int)input.length()) {
 			char c = input[pos];
 
 			if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
@@ -63,7 +63,7 @@ private:
 			if (c == '\"') {
 				pos++;
 
-				while (pos < input.length() && input[pos] != '\"') {
+				while (pos < (int)input.length() && input[pos] != '\"') {
 					token.lexeme += input[pos];
 					pos++;
 				}
@@ -77,7 +77,7 @@ private:
 				lexeme += c;
 				pos++;
 
-				while (pos < input.length() && is_digit(input[pos])) {
+				while (pos < (int)input.length() && is_digit(input[pos])) {
 					lexeme += input[pos];
 					pos++;
 				}
@@ -91,14 +91,14 @@ private:
 				lexeme += c;
 				pos++;
 
-				while (pos < input.length() && (is_alpha(input[pos]) || is_digit(input[pos]))) {
+				while (pos < (int)input.length() && (is_alpha(input[pos]) || is_digit(input[pos]))) {
 					lexeme += input[pos];
 					pos++;
 				}
 
 				if (keywords.find(lexeme) != keywords.end()) {
-					token.type = KEYWORD;
-				} else token.type = IDENTIFIER;
+					token.type = PRINT;
+				} else token.type = VARIABLE;
 
 				token.lexeme = lexeme;
 				return token;
@@ -108,7 +108,7 @@ private:
 				lexeme += c;
 				pos++;
 
-				while (pos < input.length() && is_operator(input[pos])) {
+				while (pos < (int)input.length() && is_operator(input[pos])) {
 					lexeme += input[pos];
 					pos++;
 				}
@@ -122,7 +122,7 @@ private:
 				lexeme += c;
 				pos++;
 
-				while (pos < input.length() && is_punctuation(input[pos])) {
+				while (pos < (int)input.length() && is_punctuation(input[pos])) {
 					lexeme += input[pos];
 					pos++;
 				}
@@ -163,11 +163,11 @@ public:
 		do {
 			token = next_token(file_contents, pos);
 			switch (token.type) {
-			case KEYWORD:
-				cur_type = "KEYWORD";
+			case PRINT:
+				cur_type = "PRINT";
 				break;
-			case IDENTIFIER:
-				cur_type = "IDENTIFIER";
+			case VARIABLE:
+				cur_type = "VARIABLE";
 				break;
 			case INTEGER:
 				cur_type = "INTEGER";
