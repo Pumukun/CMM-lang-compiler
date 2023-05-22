@@ -1,6 +1,5 @@
 #ifndef TRIO_HPP
 #define TRIO_HPP
-#pragma once
 
 template<typename FIRST, typename SECOND, typename THIRD> 
 struct trio {
