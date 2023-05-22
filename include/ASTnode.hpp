@@ -1,6 +1,5 @@
 #ifndef ASTNODE_HPP
 #define ASTNODE_HPP
-#pragma once
 
 #include <vector>
 #include <string>
