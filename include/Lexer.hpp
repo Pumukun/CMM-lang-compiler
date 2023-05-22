@@ -36,6 +36,7 @@ private:
 	struct Token {
 		TokenType type;
 		string lexeme;
+		int pos;
 	};
 
 	unordered_set<string> keywords = {"print"};
@@ -69,6 +70,7 @@ private:
 				}
 				
 				token.type = STRING;
+				token.pos = pos - (int)lexeme.size();
 				pos++;
 				return token;
 			}
@@ -84,6 +86,7 @@ private:
 
 				token.type = INTEGER;
 				token.lexeme = lexeme;
+				token.pos = pos - (int)lexeme.size();
 				return token;
 			}
 
@@ -101,6 +104,7 @@ private:
 				} else token.type = VARIABLE;
 
 				token.lexeme = lexeme;
+				token.pos = pos - (int)lexeme.size();
 				return token;
 			}
 
@@ -115,6 +119,7 @@ private:
 
 				token.type = OPERATOR;
 				token.lexeme = lexeme;
+				token.pos = pos - (int)lexeme.size();
 				return token;
 			}
 
@@ -129,9 +134,15 @@ private:
 
 				token.type = PUNCTUATION;
 				token.lexeme = lexeme;
+				token.pos = pos - (int)lexeme.size();
 				return token;
 			}
 			pos++;
+
+			if (!is_alpha(c) && !is_digit(c) && !is_operator(c) && !is_punctuation(c)) {
+				string msg = "Error on position: " + to_string(pos) + "\n";
+				syntax_errors.push_back(msg);
+			}
 		}
 
 		token.type = END;
@@ -189,23 +200,31 @@ public:
 				break;
 			}
 
-			grammar.push_back({token.type, cur_type, token.lexeme});
+			grammar.push_back({token.pos, cur_type, token.lexeme});
 		} while (token.lexeme != "");
 
 		grammar.pop_back();
 	}
 
 	void lexer_output() {
-		for (trio<int, string, string> &i : grammar)
-			cout << "[Type: " << i.first 
-				 << ", Type_str: " << i.second 
-				 << ", Lexeme: " << i.third << "]\n";
+		if (syntax_errors.empty()) {
+			for (trio<int, string, string> &i : grammar)
+				cout << "[Pos: " << i.first 
+					<< ", Type: " << i.second 
+					<< ", Lexeme: " << i.third << "]\n";
+		} else {
+			cout << "Token Error(s)!\n";
+			for (string &i : syntax_errors)
+				cout << i;
+		}
 	}
 
 	vector<trio<int, string, string>> get_grammar() { return grammar; }
+	vector<string> get_syntax_errors() { return syntax_errors; }
 
 private:
 	vector<trio<int, string, string>> grammar;
+	vector<string> syntax_errors;
 };
 
 #endif
