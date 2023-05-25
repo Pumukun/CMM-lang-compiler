@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-#include "trio.hpp"
+#include "Token.hpp"
 
 using namespace std;
 
@@ -21,22 +21,6 @@ public:
 	~Lexer() = default;
 
 private:
-	 
-	enum TokenType {
-		PRINT,			// 0
-		VARIABLE,		// 1
-		INTEGER,		// 2
-		STRING,			// 3
-		OPERATOR,		// 4
-		PUNCTUATION,	// 5
-		END				// 6
-	};
-
-	struct Token {
-		TokenType type;
-		string lexeme;
-		int pos;
-	};
 
 	unordered_set<string> keywords = {"print"};
 
@@ -64,12 +48,12 @@ private:
 				pos++;
 
 				while (pos < (int)input.length() && input[pos] != '\"') {
-					token.lexeme += input[pos];
+					token.set_lexeme(token.get_lexeme() += input[pos]);
 					pos++;
 				}
 				
-				token.type = STRING;
-				token.pos = pos - (int)lexeme.size();
+				token.set_type(STRING);
+				token.set_pos(pos - (int)lexeme.size());
 				pos++;
 				return token;
 			}
@@ -83,9 +67,9 @@ private:
 					pos++;
 				}
 
-				token.type = INTEGER;
-				token.lexeme = lexeme;
-				token.pos = pos - (int)lexeme.size();
+				token.set_type(INTEGER);
+				token.set_lexeme(lexeme);
+				token.set_pos(pos - (int)lexeme.size());
 				return token;
 			}
 
@@ -99,11 +83,11 @@ private:
 				}
 
 				if (keywords.find(lexeme) != keywords.end()) {
-					token.type = PRINT;
-				} else token.type = VARIABLE;
+					token.set_type(PRINT);
+				} else token.set_type(VARIABLE);
 
-				token.lexeme = lexeme;
-				token.pos = pos - (int)lexeme.size();
+				token.set_lexeme(lexeme);
+				token.set_pos(pos - (int)lexeme.size());
 				return token;
 			}
 
@@ -116,9 +100,9 @@ private:
 					pos++;
 				}
 
-				token.type = OPERATOR;
-				token.lexeme = lexeme;
-				token.pos = pos - (int)lexeme.size();
+				token.set_type(OPERATOR);
+				token.set_lexeme(lexeme);
+				token.set_pos(pos - (int)lexeme.size());
 				return token;
 			}
 
@@ -131,9 +115,9 @@ private:
 					pos++;
 				}
 
-				token.type = PUNCTUATION;
-				token.lexeme = lexeme;
-				token.pos = pos - (int)lexeme.size();
+				token.set_type(PUNCTUATION);
+				token.set_lexeme(lexeme);
+				token.set_pos(pos - (int)lexeme.size());
 				return token;
 			}
 			pos++;
@@ -144,8 +128,8 @@ private:
 			}
 		}
 
-		token.type = END;
-		token.lexeme = "";
+		token.set_type(END);
+		token.set_lexeme("");
 		return token;
 	}
 
@@ -165,52 +149,23 @@ public:
     
 		string file_contents = buffer.str();
 
-		int pos = 0;
 		Token token;
-
-		string cur_type;
+		int pos = 0;
 
 		do {
 			token = next_token(file_contents, pos);
-			switch (token.type) {
-			case PRINT:
-				cur_type = "PRINT";
-				break;
-			case VARIABLE:
-				cur_type = "VARIABLE";
-				break;
-			case INTEGER:
-				cur_type = "INTEGER";
-				break;
-			case STRING:
-				cur_type = "STRING";
-				break;
-			case OPERATOR:
-				cur_type = "OPERATOR";
-				break;
-			case PUNCTUATION:
-				cur_type = "PUNCTUATION";
-				break;
-			case END:
-				cur_type = "END";
-				break;
-			default:
-				cur_type = "NONE";
-				break;
-			}
-
-			grammar.push_back({token.pos, cur_type, token.lexeme});
-		} while (token.lexeme != "");
+			grammar.push_back(token);
+		} while (token.get_lexeme() != "");
 
 		grammar.pop_back();
 	}
 
 	void lexer_output() {
 		if (syntax_errors.empty()) {
-			for (trio<int, string, string> &i : grammar)
-				cout << "[Pos: " << i.first 
-					<< ", Type: " << i.second 
-					<< ", Lexeme: " << i.third << "]\n";
+			for (Token &i : grammar)
+				cout << "[Pos: " << i.get_pos() 
+					<< ", Type: " << i.get_type()
+					<< ", Lexeme: " << i.get_lexeme() << "]\n";
 		} else {
 			cout << "Token Error(s)!\n";
 			for (string &i : syntax_errors)
@@ -218,11 +173,11 @@ public:
 		}
 	}
 
-	vector<trio<int, string, string>> get_grammar() { return grammar; }
+	vector<Token> get_grammar() { return grammar; }
 	vector<string> get_syntax_errors() { return syntax_errors; }
 
 private:
-	vector<trio<int, string, string>> grammar;
+	vector<Token> grammar;
 	vector<string> syntax_errors;
 };
 
