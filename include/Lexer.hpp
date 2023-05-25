@@ -123,7 +123,7 @@ private:
 			pos++;
 
 			if (!is_alpha(c) && !is_digit(c) && !is_operator(c) && !is_punctuation(c)) {
-				string msg = "Error on position: " + to_string(pos) + "\n";
+				string msg = "Error on position: " + to_string(pos) + ", unknown Token: " + input[pos-1] + "\n";
 				syntax_errors.push_back(msg);
 			}
 		}
