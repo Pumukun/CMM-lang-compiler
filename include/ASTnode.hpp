@@ -4,24 +4,10 @@
 #include <vector>
 #include <string>
 
-#include "trio.hpp"
+#include "Token.hpp"
 
 using namespace std;
 
-class ASTnode {
-public:
-
-	ASTnode() = default;
-
-	~ASTnode() = default;
-
-private:
-	
-	string data;
-
-	ASTnode* parent;
-
-	vector<ASTnode*> children;
-};
+class Expression_node;
 
 #endif
