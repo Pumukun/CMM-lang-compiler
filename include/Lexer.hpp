@@ -32,6 +32,8 @@ private:
 	
 	bool is_punctuation(char c) { return c == '(' || c == ')'; }
 
+	bool is_semicolon(char c) { return c == ';'; }
+
 	Token next_token(const string &input, int &pos) {
 		Token token;
 		string lexeme;
@@ -110,16 +112,22 @@ private:
 				lexeme += c;
 				pos++;
 
-				while (pos < (int)input.length() && is_punctuation(input[pos])) {
-					lexeme += input[pos];
-					pos++;
-				}
-
 				token.set_type(PUNCTUATION);
 				token.set_lexeme(lexeme);
 				token.set_pos(pos - (int)lexeme.size());
 				return token;
 			}
+
+			if (is_semicolon(c)) {
+				lexeme += c;
+				pos++;
+
+				token.set_type(SEMICOLON);
+				token.set_lexeme(lexeme);
+				token.set_pos(pos - (int)lexeme.size());
+				return token;
+			}
+
 			pos++;
 
 			if (!is_alpha(c) && !is_digit(c) && !is_operator(c) && !is_punctuation(c)) {

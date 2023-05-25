@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "Lexer.hpp"
+#include "Parser.hpp"
 
 using namespace std;
 
@@ -21,6 +22,9 @@ int main(int argc, char** argv) {
 	Lexer lex;
 	lex.generate_grammar(file_path);  
 	lex.lexer_output();
+
+	Parser pars(lex.get_grammar());
+	pars.parse_code();
 	
     return 0;
 }
