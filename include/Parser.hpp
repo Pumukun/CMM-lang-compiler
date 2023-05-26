@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <string>
+#include <cstdlib>
+#include <typeinfo>
 
 #include "AST.hpp"
 #include "Token.hpp"
@@ -116,7 +118,7 @@ private:
 		}
 		throw runtime_error("expected assing operator on pos" + to_string(pos));
 	}
-
+public:
 	Expression_Node parse_code() {
 		Statesment_Node root;
 		
@@ -129,10 +131,34 @@ private:
 		return root;
 	}
 
-public:
-
-	void run_code() {
-		
+	void run_code(Expression_Node p_node) {
+		if(typeid(p_node) == typeid(Number_Node)){
+			return stoi(p_node.number.get_lexeme());
+		}
+		if (typeid(p_node) == typeid(Unar_oper_Node)){
+			switch (p_node.oper.get_type()){
+			case PRINT: cout << run(node.oper)}
+			default:
+				continue;
+		} 
+		if (typeid(p_node) == typeid(Binary_oper_Node)){
+			string cur_lex = p_node.oper.get_lexeme()
+			if (cur_lex == "+"){
+				return left_node + right_node;
+			}
+			if (cur_lex == "-"){
+				return left_node - right_node;
+			}
+			if (cur_lex == "="){
+				int result = run(right_node);
+				return result;
+			}
+		if (scope(cur_lex)){
+			return scope(cur_lex);
+			else return cout << "variable not exist" << endl;
+		}
+		for (auto&i:node.MyNode){run(i)};
+		}
 	}
 };
 

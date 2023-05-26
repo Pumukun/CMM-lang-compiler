@@ -4,6 +4,7 @@
 
 #include "Lexer.hpp"
 #include "Parser.hpp"
+#include "AST.hpp"
 
 using namespace std;
 
@@ -24,8 +25,11 @@ int main(int argc, char** argv) {
 	lex.lexer_output();
 
 	Parser pars(lex.get_grammar());
-	pars.parse_code();
+	auto root = pars.parse_code();
+	pars.run(root);
 	
     return 0;
 }
+
+
 
