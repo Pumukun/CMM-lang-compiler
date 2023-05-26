@@ -131,33 +131,35 @@ public:
 		return root;
 	}
 
-	void run_code(Expression_Node p_node) {
-		if(typeid(p_node) == typeid(Number_Node)){
-			return stoi(p_node.number.get_lexeme());
+	Expression_Node run_code(auto p_node) {
+		if(typeid(p_node) == typeid(Number_Node)) {
+			return p_node;
 		}
-		if (typeid(p_node) == typeid(Unar_oper_Node)){
+		if (typeid(p_node) == typeid(Unar_oper_Node)) {
 			switch (p_node.oper.get_type()){
-			case PRINT: cout << run(node.oper)}
+			case PRINT: 
+				cout << (p_node.oper.get_lexeme());
 			default:
-				continue;
+				break;
+			}
 		} 
 		if (typeid(p_node) == typeid(Binary_oper_Node)){
-			string cur_lex = p_node.oper.get_lexeme()
-			if (cur_lex == "+"){
-				return left_node + right_node;
+			string cur_lex = p_node.oper.get_lexeme();
+			if (cur_lex == "+") {
+				return run_code(p_node.left_node + p_node.right_node);
 			}
-			if (cur_lex == "-"){
-				return left_node - right_node;
+			if (cur_lex == "-") {
+				return run_code(p_node.left_node - p_node.right_node);
 			}
-			if (cur_lex == "="){
-				int result = run(right_node);
+			if (cur_lex == "=") {
+				Expression_Node result = run_code(p_node.right_node);
 				return result;
 			}
-		if (scope(cur_lex)){
-			return scope(cur_lex);
-			else return cout << "variable not exist" << endl;
-		}
-		for (auto&i:node.MyNode){run(i)};
+			if (scope(cur_lex)) {
+				return scope(cur_lex);
+			} else cout << "variable not exist" << endl;
+
+			for (auto&i:node.MyNode) { run_code(i); }
 		}
 	}
 };

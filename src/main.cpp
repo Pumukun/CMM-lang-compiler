@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
 
 	Parser pars(lex.get_grammar());
 	auto root = pars.parse_code();
-	pars.run(root);
+	pars.run_code(root);
 	
     return 0;
 }
