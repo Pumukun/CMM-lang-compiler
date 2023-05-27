@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "Lexer.hpp"
-//#include "Parser.hpp"
+#include "Parser.hpp"
 #include "AST.hpp"
 
 using namespace std;

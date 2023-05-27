@@ -27,13 +27,6 @@ private:
 	int pos;
 	pair<string, int> scope;
 
-public:
-
-	void generate_AST() {
-		
-		return ;
-	}
-
 private:
 
 	Token match(TokenType p_expected) {
@@ -130,10 +123,10 @@ public:
 
 		return root;
 	}
-
+	
 	Expression_Node run_code(auto p_node) {
 		if(typeid(p_node) == typeid(Number_Node)) {
-			return p_node;
+			return ;
 		}
 		if (typeid(p_node) == typeid(Unar_oper_Node)) {
 			switch (p_node.oper.get_type()){
