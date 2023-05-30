@@ -126,10 +126,11 @@ public:
 	}
 	
 	Expression_Node run_code(auto p_node) {
-		offstream_out;
-		out_open("prog.txt"){
-			if(typeid(p_node) == typeid(Number_Node)) {
-			return ;
+		offstream out;
+		if out_open("prog.txt"){
+			if(typeid(p_node) == typeid(Number_Node)){
+			result = p_node;
+			out << result << endl;
 		}
 		if (typeid(p_node) == typeid(Unar_oper_Node)) {
 			switch (p_node.oper.get_type()){
@@ -144,17 +145,17 @@ public:
 			Expression_Node result;
 			if (cur_lex == "+") {
 				result = run_code(p_node.left_node + p_node.right_node);
-				cout << result << endl;
+				out << result << endl;
 			}
 			if (cur_lex == "-") {
 				result = run_code(p_node.left_node - p_node.right_node);
-				cout << result << endl;
+				out << result << endl;
 			}
 			if (cur_lex == "=") {
 				const right_result = run_code(p_node.right_node);
 				const variablenode = (left_node p_node : public Variable_Node);
 				result = right_result = variablenode;
-				cout << result << endl;
+				out << result << endl;
 			}
 			if (scope(cur_lex)) {
 				return scope(cur_lex);
@@ -162,7 +163,6 @@ public:
 
 			for (auto&i:node.MyNode) { run_code(i); }
 		}
-	}
 	out.close();
 	}
 };
