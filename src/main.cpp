@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "Lexer.hpp"
-//#include "Parser.hpp"
+#include "Parser.hpp"
 #include "AST.hpp"
 
 using namespace std;
@@ -24,11 +24,11 @@ int main(int argc, char** argv) {
 	lex.generate_grammar(file_path);  
 	lex.lexer_output();
 	
-	/*
+	
 	Parser pars(lex.get_grammar());
 	auto root = pars.parse_code();
 	pars.run_code(root);
-	*/
+
     return 0;
 }
 

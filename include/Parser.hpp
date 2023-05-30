@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdlib>
 #include <typeinfo>
+#include <fstream>
 
 #include "AST.hpp"
 #include "Token.hpp"
@@ -125,7 +126,9 @@ public:
 	}
 	
 	Expression_Node run_code(auto p_node) {
-		if(typeid(p_node) == typeid(Number_Node)) {
+		offstream_out;
+		out_open("prog.txt"){
+			if(typeid(p_node) == typeid(Number_Node)) {
 			return ;
 		}
 		if (typeid(p_node) == typeid(Unar_oper_Node)) {
@@ -138,15 +141,20 @@ public:
 		} 
 		if (typeid(p_node) == typeid(Binary_oper_Node)){
 			string cur_lex = p_node.oper.get_lexeme();
+			Expression_Node result;
 			if (cur_lex == "+") {
-				return run_code(p_node.left_node + p_node.right_node);
+				result = run_code(p_node.left_node + p_node.right_node);
+				cout << result << endl;
 			}
 			if (cur_lex == "-") {
-				return run_code(p_node.left_node - p_node.right_node);
+				result = run_code(p_node.left_node - p_node.right_node);
+				cout << result << endl;
 			}
 			if (cur_lex == "=") {
-				Expression_Node result = run_code(p_node.right_node);
-				return result;
+				const right_result = run_code(p_node.right_node);
+				const variablenode = (left_node p_node : public Variable_Node);
+				result = right_result = variablenode;
+				cout << result << endl;
 			}
 			if (scope(cur_lex)) {
 				return scope(cur_lex);
@@ -154,6 +162,8 @@ public:
 
 			for (auto&i:node.MyNode) { run_code(i); }
 		}
+	}
+	out.close();
 	}
 };
 
