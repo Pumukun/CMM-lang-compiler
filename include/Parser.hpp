@@ -1,11 +1,14 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
+
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <cstdlib>
 #include <typeinfo>
-#include <fstream>
+
 
 #include "AST.hpp"
 #include "Token.hpp"
@@ -126,16 +129,16 @@ public:
 	}
 	
 	Expression_Node run_code(auto p_node) {
-		offstream out;
-		if (out_open("prog.txt")) {
+		ifstream in("prog.txt");
+		string result;
+		if (in.is_open()) {
 			if(typeid(p_node) == typeid(Number_Node)) {
-				result = p_node;
-				out << result << endl;
+				in << p_node << endl;
 			}
 			if (typeid(p_node) == typeid(Unar_oper_Node)) {
-				switch (p_node.oper.get_type()) {
+				switch (p_node.oper.get_type()) {sudo apt-get update
 					case PRINT: 
-						cout << (p_node.oper.get_lexeme());
+						in << (p_node.oper.get_lexeme());
 					default:
 						break;
 				}
@@ -145,17 +148,17 @@ public:
 				Expression_Node result;
 				if (cur_lex == "+") {
 					result = run_code(p_node.left_node + p_node.right_node);
-					out << result << endl;
+					in << result << endl;
 				}
 				if (cur_lex == "-") {
 					result = run_code(p_node.left_node - p_node.right_node);
-					out << result << endl;
+					in << result << endl;
 				}
 				if (cur_lex == "=") {
 					const right_result = run_code(p_node.right_node);
 					const variablenode = (left_node p_node : public Variable_Node);
 					result = right_result = variablenode;
-					out << result << endl;
+					in << result << endl;
 				}
 				if (scope(cur_lex)) {
 					return scope(cur_lex);
@@ -164,7 +167,7 @@ public:
 				for (auto&i:node.MyNode) { run_code(i); }
 			}
 
-		out.close();
+		in.close();
 		}
 	}
 };
