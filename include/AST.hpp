@@ -10,41 +10,41 @@
 
 using namespace std;
 
-class Extra_node{
+class AST_Node {
 private:
 
 	Token token;
-	Extra_node* left_node;
-	Extra_node* right_node;	
+	AST_Node* left_node;
+	AST_Node* right_node;	
 
 public:
 
-	Extra_node() = default;
+	AST_Node() = default;
 	
-	void Extra_Node(Token p_token) {
+	AST_Node(Token p_token) {
 	 	token = p_token;
 	}
 
-	void Extra_Node(Token p_token, Extra_node* p_left_node, Extra_node* p_right_node) {
+	AST_Node(Token p_token, AST_Node* p_left_node, AST_Node* p_right_node) {
 		token = p_token;
 		left_node = p_left_node;
 		right_node = p_right_node;
 	}
 
-	~Extra_node() = default;
+	~AST_Node() = default;
 
-	vector <Extra_node> nodes;
-	void add_node(Extra_node p_node) {
+	vector <AST_Node> nodes;
+	void add_node(AST_Node p_node) {
 		nodes.push_back(p_node);
 	}
 	
 	void set_token(Token p_token) { p_token = token; }
-	void set_left_node(Extra_node* p_left_node) { p_left_node = left_node; }
-	void set_right_node(Extra_node* p_right_node) { p_right_node = right_node; }
+	void set_left_node(AST_Node* p_left_node) { p_left_node = left_node; }
+	void set_right_node(AST_Node* p_right_node) { p_right_node = right_node; }
 
 	Token get_token() { return token; }
-	Extra_node* get_left_node() { return left_node; }
-	Extra_node* get_right_node() { return right_node; }
+	AST_Node* get_left_node() { return left_node; }
+	AST_Node* get_right_node() { return right_node; }
 
 };
 

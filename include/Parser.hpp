@@ -53,30 +53,33 @@ private:
 		return token;
 	}
 
-	Expression_Node pasre_var_or_num() {
+	AST_Node* pasre_var_or_num() {
 		const Token number = match(INTEGER);
 
 		if (number.get_type() != END) {
-			return Number_Node(number);
+			//AST_Node* res = new AST_Node(number) 
+			return new AST_Node(number);
 		}
 		const Token variable = match(VARIABLE);
 		if (variable.get_type() != END) {
-			return Variable_Node(variable);
+			return new AST_Node(variable);
 		}
 
 		throw runtime_error("expected num or var on pos: " + to_string(pos));
 	}
 	
-	Expression_Node parse_print() {
+	AST_Node* parse_print() {
 		const Token token = match(PRINT);
 		if (token.get_type() != END) {
-			Expression_Node operand = parse_formula();
-			return Unar_oper_Node(token, operand);
+			AST_Node* operand = parse_formula();
+			AST_Node* res = new AST_Node(token); 
+			res->set_right_node(operand);
+			return res;
 		}
 		throw runtime_error("expected print {var || expr} on pos: " + to_string(pos));
 	}
 
-	Expression_Node parse_parentheses() {
+	AST_Node* parse_parentheses() {
 		Token cur_token = match(PUNCTUATION);
 		if (cur_token.get_type() != END && cur_token.get_lexeme() == "(") {
 			const auto node = parse_formula();
@@ -89,18 +92,18 @@ private:
 		}
 	}
 
-	Expression_Node parse_formula() {
-		auto left_node = parse_parentheses();
-		auto oper = match(OPERATOR);
+	AST_Node* parse_formula() {
+		AST_Node* left_node = parse_parentheses();
+		Token oper = match(OPERATOR);
 		while (oper.get_type() != END) {
-			const auto right_node = parse_parentheses();
-			const Binary_oper_Node left_node = Binary_oper_Node(oper, left_node, right_node);
+			AST_Node* right_node = parse_parentheses();
+			AST_Node* left_node = new AST_Node(oper, left_node, right_node);
 			oper = match(OPERATOR);
 		}
 		return left_node;
 	}
 
-	Expression_Node parse_expression() {
+	AST_Node* parse_expression() {
 		if (match(VARIABLE).get_type() == END) {
 			const auto print_node = parse_print();
 			return print_node;
@@ -109,32 +112,29 @@ private:
 		auto var_node = pasre_var_or_num();
 		const Token assign_oper = match(OPERATOR);
 		if (assign_oper.get_type() != END && assign_oper.get_lexeme() == "=") {
-			const auto right_formula_node = parse_formula();
-			const auto binary_node = Binary_oper_Node(assign_oper, var_node, right_formula_node);
+			AST_Node* right_formula_node = parse_formula();
+			AST_Node* binary_node = new AST_Node(assign_oper, var_node, right_formula_node);
 			return binary_node;
 		}
 		throw runtime_error("expected assing operator on pos" + to_string(pos));
 	}
+
 public:
-	Expression_Node parse_code() {
-		Statesment_Node root;
+
+	AST_Node* parse_code() {
+		AST_Node* root;
 		
 		while (pos < (int)tokens.size()) {
-			const Expression_Node code_str_node = parse_expression();
+			const AST_Node* code_str_node = parse_expression();
 			require(SEMICOLON);
-			root.add_node(code_str_node);
+			root->add_node(*code_str_node);
 		}
 
 		return root;
 	}
 	
-
 	/*
-	Дерево мб надо переписать, потому что получется очень неудобная структура.
-	Нет общего вывода в поток, нет аргуметов, потому что все узла - это Expression_Node,
-	У которого нет ни вывода ни полей, ничего.
-	*/
-	Expression_Node run_code(auto p_node) {
+	AST_Node run_code(auto p_node) {
 		ifstream in("prog.txt");
 		string result;
 		if (in.is_open()) {
@@ -142,7 +142,7 @@ public:
 				in << p_node << endl;
 			}
 			if (typeid(p_node) == typeid(Unar_oper_Node)) {
-				switch (p_node.oper.get_type()) {sudo apt-get update
+				switch (p_node.oper.get_type()) {
 					case PRINT: 
 						in << "std::cout << "<< (p_node.oper.get_lexeme());
 					default:
@@ -151,7 +151,7 @@ public:
 			} 
 			if (typeid(p_node) == typeid(Binary_oper_Node)) {
 				string cur_lex = p_node.oper.get_lexeme();
-				Expression_Node result;
+				AST_Node result;
 				if (cur_lex == "+") {
 					result = run_code(p_node.left_node + p_node.right_node);
 					in << result << endl;
@@ -167,7 +167,7 @@ public:
 					in << result << endl;
 				}
 				if (scope(cur_lex)) {
-					/*Чето сделай с этой переменной*/ scope(cur_lex);
+					scope(cur_lex);
 				} else cout << "variable not exist" << endl;
 
 				for (auto&i:node.MyNode) { run_code(i); }
@@ -176,6 +176,7 @@ public:
 		in.close();
 		}
 	}
+	*/
 };
 
 #endif
