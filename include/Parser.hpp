@@ -128,6 +128,12 @@ public:
 		return root;
 	}
 	
+
+	/*
+	Дерево мб надо переписать, потому что получется очень неудобная структура.
+	Нет общего вывода в поток, нет аргуметов, потому что все узла - это Expression_Node,
+	У которого нет ни вывода ни полей, ничего.
+	*/
 	Expression_Node run_code(auto p_node) {
 		ifstream in("prog.txt");
 		string result;
@@ -138,7 +144,7 @@ public:
 			if (typeid(p_node) == typeid(Unar_oper_Node)) {
 				switch (p_node.oper.get_type()) {sudo apt-get update
 					case PRINT: 
-						in << (p_node.oper.get_lexeme());
+						in << "std::cout << "<< (p_node.oper.get_lexeme());
 					default:
 						break;
 				}
@@ -161,7 +167,7 @@ public:
 					in << result << endl;
 				}
 				if (scope(cur_lex)) {
-					return scope(cur_lex);
+					/*Чето сделай с этой переменной*/ scope(cur_lex);
 				} else cout << "variable not exist" << endl;
 
 				for (auto&i:node.MyNode) { run_code(i); }
