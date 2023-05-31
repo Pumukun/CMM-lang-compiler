@@ -12,24 +12,13 @@ using namespace std;
 
 class Extra_node{
 private:
+
 	Token token;
 	Extra_node* left_node;
 	Extra_node* right_node;	
+
 public:
 
-	void set_token(Token p_token){
-		p_token = token;
-	}
-	void set_left_node(Extra_node* p_left_node){
-		p_left_node = left_node;
-	}
-	void set_right_node(Extra_node* p_right_node){
-		p_right_node = right_node;
-	}
-
-	Token get_token() {return token;}
-	Extra_node* get_left_node() {return left_node;}
-	Extra_node* get_right_node() {return right_node;}
 	Extra_node() = default;
 	
 	void Extra_Node(Token p_token) {
@@ -43,14 +32,19 @@ public:
 	}
 
 	~Extra_node() = default;
-	vector <Extra_node> nodes;
 
+	vector <Extra_node> nodes;
 	void add_node(Extra_node p_node) {
 		nodes.push_back(p_node);
 	}
 	
+	void set_token(Token p_token) { p_token = token; }
+	void set_left_node(Extra_node* p_left_node) { p_left_node = left_node; }
+	void set_right_node(Extra_node* p_right_node) { p_right_node = right_node; }
 
-
+	Token get_token() { return token; }
+	Extra_node* get_left_node() { return left_node; }
+	Extra_node* get_right_node() { return right_node; }
 
 };
 
