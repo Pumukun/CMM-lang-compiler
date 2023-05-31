@@ -26,7 +26,13 @@ int main(int argc, char** argv) {
 	
 	
 	Parser pars(lex.get_grammar());
-	auto root = pars.parse_code();
+	AST_Node* root = pars.parse_code();
+	
+	for (auto &i : root->nodes) {
+		cout << i << endl;
+	}
+
+	print_tree(root);
 	// pars.run_code(root);
 
     return 0;

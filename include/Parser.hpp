@@ -48,7 +48,7 @@ private:
 	Token require(TokenType p_expected) {
 		const Token token = match(p_expected);
 		if (token.get_type() == END) { 
-			throw runtime_error("expected: " + to_string(p_expected) + " on position" + to_string(pos) + "\n");
+			throw runtime_error("expected: " + to_string(p_expected) + " on position: " + to_string(pos) + "\n");
 		}
 		return token;
 	}
@@ -57,7 +57,6 @@ private:
 		const Token number = match(INTEGER);
 
 		if (number.get_type() != END) {
-			//AST_Node* res = new AST_Node(number) 
 			return new AST_Node(number);
 		}
 		const Token variable = match(VARIABLE);
@@ -82,7 +81,7 @@ private:
 	AST_Node* parse_parentheses() {
 		Token cur_token = match(PUNCTUATION);
 		if (cur_token.get_type() != END && cur_token.get_lexeme() == "(") {
-			const auto node = parse_formula();
+			AST_Node* node = parse_formula();
 			Token req_token = require(PUNCTUATION);
 			if (req_token.get_lexeme() == ")")
 				return node;
@@ -105,7 +104,7 @@ private:
 
 	AST_Node* parse_expression() {
 		if (match(VARIABLE).get_type() == END) {
-			const auto print_node = parse_print();
+			AST_Node* print_node = parse_print();
 			return print_node;
 		}
 		pos--;
@@ -116,25 +115,25 @@ private:
 			AST_Node* binary_node = new AST_Node(assign_oper, var_node, right_formula_node);
 			return binary_node;
 		}
-		throw runtime_error("expected assing operator on pos" + to_string(pos));
+		throw runtime_error("expected assing operator on pos: " + to_string(pos));
 	}
 
 public:
 
 	AST_Node* parse_code() {
-		AST_Node* root;
+		AST_Node* root = new AST_Node();
 		
 		while (pos < (int)tokens.size()) {
-			const AST_Node* code_str_node = parse_expression();
+			AST_Node* code_str_node = parse_expression();
 			require(SEMICOLON);
-			root->add_node(*code_str_node);
+			root->add_node(code_str_node);
+			cout << *code_str_node << endl;
 		}
 
 		return root;
 	}
-	
-	/*
-	AST_Node run_code(auto p_node) {
+	/*	
+	AST_Node* run_code(auto p_node) {
 		ifstream in("prog.txt");
 		string result;
 		if (in.is_open()) {
@@ -161,8 +160,8 @@ public:
 					in << result << endl;
 				}
 				if (cur_lex == "=") {
-					const right_result = run_code(p_node.right_node);
-					const variablenode = (left_node p_node : public Variable_Node);
+					const AST_Node* right_result = run_code(p_node.right_node);
+					const AST_Node* variablenode = p_node.get_left_node();
 					result = right_result = variablenode;
 					in << result << endl;
 				}
@@ -170,7 +169,7 @@ public:
 					scope(cur_lex);
 				} else cout << "variable not exist" << endl;
 
-				for (auto&i:node.MyNode) { run_code(i); }
+				for (auto&i:p_node.MyNode) { run_code(i); }
 			}
 
 		in.close();
