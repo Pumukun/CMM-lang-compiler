@@ -8,6 +8,8 @@
 
 using namespace std;
 
+/*
+
 class Expression_Node {
 public:
 	virtual ~Expression_Node() = default;
@@ -90,5 +92,48 @@ public:
 
 	~Assign_Node() = default;
 };
+
+#endif
+*/
+
+
+class Extra_node{
+private:
+	Token token;
+	Extra_node* left_node;
+	Extra_node* right_node;	
+public:
+	void set_token(token){
+		this->token = token;
+		p_token;
+	}
+	void set_left_node(left_node){
+		this->left_node = left_node;
+	}
+	void set_right_node(right_node){
+		this->right_node = right_node;
+	}
+	get_token() {return token;}
+	get_left_token() {return left_node;}
+	get_right_token() {return right_node;}
+	Extra_node() = default;
+	
+	Extra_Node(Token p_token) {
+	 	token = p_token;
+	}
+
+	Extra_Node(Token p_oper, Expression_Node p_left_node, Expression_Node p_right_node) {
+		oper = p_oper;
+		left_node = p_left_node;
+		right_node = p_right_node;
+	}
+
+	~Extra_node() = default;
+	vector <Extra_node> nodes;
+
+	void add_node(Extra_Node p_node) {
+		nodes.push_back(p_node);
+	}
+}
 
 #endif

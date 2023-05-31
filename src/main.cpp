@@ -25,10 +25,10 @@ int main(int argc, char** argv) {
 	lex.lexer_output();
 	
 	
-	Parser pars(lex.get_grammar());
+	/*Parser pars(lex.get_grammar());
 	auto root = pars.parse_code();
 	pars.run_code(root);
-
+*/
     return 0;
 }
 
