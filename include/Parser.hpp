@@ -18,10 +18,11 @@ using namespace std;
 class Parser {
 public:
 
-	Parser(vector<Token> p_tokens) {
-		tokens = move(p_tokens);
-		pos = 0;
-	};
+	Parser(vector<Token> p_tokens):
+		tokens(move(p_tokens)), 
+		pos(0), 
+		scope("", 0) 
+	{ }
 
 	~Parser() = default;
 
@@ -67,6 +68,17 @@ private:
 		throw runtime_error("expected num or var on pos: " + to_string(pos));
 	}
 	
+	AST_Node* parse_formula() {
+		AST_Node* left_node = parse_parentheses();
+		Token oper = match(OPERATOR);
+		while (oper.get_type() != END) {
+			AST_Node* right_node = parse_parentheses();
+			left_node = new AST_Node(oper, left_node, right_node);
+			oper = match(OPERATOR);
+		}
+		return left_node;
+	}	
+
 	AST_Node* parse_print() {
 		const Token token = match(PRINT);
 		if (token.get_type() != END) {
@@ -89,18 +101,7 @@ private:
 		} else {
 			return pasre_var_or_num();
 		}
-	}
-
-	AST_Node* parse_formula() {
-		AST_Node* left_node = parse_parentheses();
-		Token oper = match(OPERATOR);
-		while (oper.get_type() != END) {
-			AST_Node* right_node = parse_parentheses();
-			AST_Node* left_node = new AST_Node(oper, left_node, right_node);
-			oper = match(OPERATOR);
-		}
-		return left_node;
-	}
+	}	
 
 	AST_Node* parse_expression() {
 		if (match(VARIABLE).get_type() == END) {
@@ -122,7 +123,7 @@ public:
 
 	AST_Node* parse_code() {
 		AST_Node* root = new AST_Node();
-		
+
 		while (pos < (int)tokens.size()) {
 			AST_Node* code_str_node = parse_expression();
 			require(SEMICOLON);
