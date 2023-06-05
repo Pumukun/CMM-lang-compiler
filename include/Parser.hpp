@@ -1,14 +1,13 @@
 #ifndef PARSER_HPP
 #define PARSER_HPP
 
-
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <cstdlib>
 #include <typeinfo>
-
+#include <map>
 
 #include "AST.hpp"
 #include "Token.hpp"
@@ -20,8 +19,7 @@ public:
 
 	Parser(vector<Token> p_tokens):
 		tokens(move(p_tokens)), 
-		pos(0), 
-		scope("", 0) 
+		pos(0)  
 	{ }
 
 	~Parser() = default;
@@ -30,7 +28,8 @@ private:
 
 	vector<Token> tokens;
 	int pos;
-	pair<string, int> scope;
+	map<string, int> scope_int;
+	map<string, string> scope_str;
 
 private:
 
@@ -49,74 +48,37 @@ private:
 	Token require(TokenType p_expected) {
 		const Token token = match(p_expected);
 		if (token.get_type() == END) { 
-			throw runtime_error("expected: " + to_string(p_expected) + " on position: " + to_string(pos) + "\n");
+			throw runtime_error("expected: " + TokenType_array[p_expected] + " on position: " + to_string(pos) + "\n");
 		}
 		return token;
 	}
-
-	AST_Node* pasre_var_or_num() {
-		const Token number = match(INTEGER);
-
-		if (number.get_type() != END) {
-			return new AST_Node(number);
-		}
-		const Token variable = match(VARIABLE);
-		if (variable.get_type() != END) {
-			return new AST_Node(variable);
-		}
-
-		throw runtime_error("expected num or var on pos: " + to_string(pos));
-	}
 	
 	AST_Node* parse_formula() {
-		AST_Node* left_node = parse_parentheses();
-		Token oper = match(OPERATOR);
-		while (oper.get_type() != END) {
-			AST_Node* right_node = parse_parentheses();
-			left_node = new AST_Node(oper, left_node, right_node);
-			oper = match(OPERATOR);
-		}
-		return left_node;
-	}	
+		Token tmp_Token = tokens[pos];
+		int tmp_type = tmp_Token.get_type();
+		
+		string formula = "";
 
-	AST_Node* parse_print() {
-		const Token token = match(PRINT);
-		if (token.get_type() != END) {
-			AST_Node* operand = parse_formula();
-			AST_Node* res = new AST_Node(token); 
-			res->set_right_node(operand);
-			return res;
+		while (tmp_type == OPERATOR || tmp_type == VARIABLE || tmp_type == INTEGER || tmp_type == PUNCTUATION) {
+			tmp_Token = tokens[pos]; 
+			tmp_type = tmp_Token.get_type();
+			if (tmp_type == SEMICOLON) break;
+			formula = formula + tmp_Token.get_lexeme();
+			pos++;
 		}
-		throw runtime_error("expected print {var || expr} on pos: " + to_string(pos));
+
+		cout << formula << "\n" << pos << endl;
+		pos += 2;	
+		return new AST_Node();
 	}
 
-	AST_Node* parse_parentheses() {
-		Token cur_token = match(PUNCTUATION);
-		if (cur_token.get_type() != END && cur_token.get_lexeme() == "(") {
-			AST_Node* node = parse_formula();
-			Token req_token = require(PUNCTUATION);
-			if (req_token.get_lexeme() == ")")
-				return node;
-			else throw runtime_error("expected: ) on pos: " + to_string(pos));
-		} else {
-			return pasre_var_or_num();
-		}
-	}	
+	AST_Node* parse_print() {
+		cout << "print " + tokens[pos].get_lexeme() << endl;
+		return new AST_Node(tokens[pos]);
+	}
 
-	AST_Node* parse_expression() {
-		if (match(VARIABLE).get_type() == END) {
-			AST_Node* print_node = parse_print();
-			return print_node;
-		}
-		pos--;
-		auto var_node = pasre_var_or_num();
-		const Token assign_oper = match(OPERATOR);
-		if (assign_oper.get_type() != END && assign_oper.get_lexeme() == "=") {
-			AST_Node* right_formula_node = parse_formula();
-			AST_Node* binary_node = new AST_Node(assign_oper, var_node, right_formula_node);
-			return binary_node;
-		}
-		throw runtime_error("expected assing operator on pos: " + to_string(pos));
+	AST_Node* parse_var() {
+		
 	}
 
 public:
@@ -125,10 +87,25 @@ public:
 		AST_Node* root = new AST_Node();
 
 		while (pos < (int)tokens.size()) {
-			AST_Node* code_str_node = parse_expression();
-			require(SEMICOLON);
-			root->add_node(code_str_node);
-			cout << *code_str_node << endl;
+			if (match(VARIABLE).get_type() != END) {
+				require(OPERATOR);
+				
+				pos--;
+				if (tokens[pos].get_lexeme() != "=")
+					throw runtime_error("expected: = after variable! on position: " + to_string(pos));
+				pos++;
+
+				if (tokens[pos].get_lexeme() == "-")
+					pos++;
+				
+				parse_formula();
+			}
+			
+			if (match(PRINT).get_type() != END) {
+				if (tokens[pos].get_type() == VARIABLE || tokens[pos].get_type() == INTEGER || tokens[pos].get_type() == STRING)
+					parse_print();
+				throw runtime_error("expected: VAR || INT || STR after print!");
+			}
 		}
 
 		return root;

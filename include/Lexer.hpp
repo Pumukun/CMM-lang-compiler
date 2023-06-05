@@ -34,14 +34,20 @@ private:
 
 	bool is_semicolon(char c) { return c == ';'; }
 
-	Token next_token(const string &input, int &pos) {
+	Token next_token(const string &input, int &pos, int &line) {
 		Token token;
 		string lexeme;
 
 		while (pos < (int)input.length()) {
 			char c = input[pos];
 
-			if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
+			if (c == ' ' || c == '\t' || c == '\r') {
+				pos++;
+				continue;
+			}
+
+			if (c == '\n') {
+				line++;
 				pos++;
 				continue;
 			}
@@ -56,6 +62,7 @@ private:
 				
 				token.set_type(STRING);
 				token.set_pos(pos - (int)lexeme.size());
+				token.set_line(line);
 				pos++;
 				return token;
 			}
@@ -72,6 +79,7 @@ private:
 				token.set_type(INTEGER);
 				token.set_lexeme(lexeme);
 				token.set_pos(pos - (int)lexeme.size());
+				token.set_line(line);
 				return token;
 			}
 
@@ -90,6 +98,7 @@ private:
 
 				token.set_lexeme(lexeme);
 				token.set_pos(pos - (int)lexeme.size());
+				token.set_line(line);
 				return token;
 			}
 
@@ -105,6 +114,7 @@ private:
 				token.set_type(OPERATOR);
 				token.set_lexeme(lexeme);
 				token.set_pos(pos - (int)lexeme.size());
+				token.set_line(line);
 				return token;
 			}
 
@@ -115,6 +125,7 @@ private:
 				token.set_type(PUNCTUATION);
 				token.set_lexeme(lexeme);
 				token.set_pos(pos - (int)lexeme.size());
+				token.set_line(line);
 				return token;
 			}
 
@@ -125,32 +136,35 @@ private:
 				token.set_type(SEMICOLON);
 				token.set_lexeme(lexeme);
 				token.set_pos(pos - (int)lexeme.size());
+				token.set_line(line);
 				return token;
 			}
 
 			pos++;
 
 			if (!is_alpha(c) && !is_digit(c) && !is_operator(c) && !is_punctuation(c)) {
-				string msg = "Error on position: " + to_string(pos) + ", unknown Token: " + input[pos-1] + "\n";
+				string msg = "Error on line: " + to_string(line) + ", pos: " + to_string(pos) + ", unknown Token: " + input[pos-1] + "\n";
 				syntax_errors.push_back(msg);
 			}
 		}
 
 		token.set_type(END);
 		token.set_lexeme("");
+		token.set_pos(pos);
+		token.set_line(line);
 		return token;
 	}
 
 public:
 
-	void generate_grammar(string path) {
+	void generate_lexerout(string path) {
 		ifstream file(path);
 		stringstream buffer;
-		string line;
+		string f_line;
     
 		if (file.is_open()) {
-			while (getline(file, line))
-				buffer << line << "\n";
+			while (getline(file, f_line))
+				buffer << f_line << "\n";
 
 			file.close();
 		} else cout << "Unable to open file\n";
@@ -159,20 +173,22 @@ public:
 
 		Token token;
 		int pos = 0;
+		int tmp_line = 1;
 
 		do {
-			token = next_token(file_contents, pos);
-			grammar.push_back(token);
+			token = next_token(file_contents, pos, tmp_line);
+			lexerout.push_back(token);
 		} while (token.get_lexeme() != "");
 
-		grammar.pop_back();
+		lexerout.pop_back();
 	}
 
 	void lexer_output() {
 		if (syntax_errors.empty()) {
-			for (Token &i : grammar)
-				cout << "[Pos: " << i.get_pos() 
-					<< ", Type: " << i.get_type()
+			for (Token &i : lexerout)
+				cout << "[Line: " << i.get_line() 
+					<< ", Pos: " << i.get_pos() 
+					<< ", Type: " << TokenType_array[i.get_type()]
 					<< ", Lexeme: " << i.get_lexeme() << "]\n";
 		} else {
 			cout << "Token Error(s)!\n";
@@ -181,11 +197,11 @@ public:
 		}
 	}
 
-	vector<Token> get_grammar() { return grammar; }
+	vector<Token> get_lexerout() { return lexerout; }
 	vector<string> get_syntax_errors() { return syntax_errors; }
 
 private:
-	vector<Token> grammar;
+	vector<Token> lexerout;
 	vector<string> syntax_errors;
 };
 

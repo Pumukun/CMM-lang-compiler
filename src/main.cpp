@@ -21,20 +21,15 @@ int main(int argc, char** argv) {
 	string file_path = argv[1];
 
 	Lexer lex;
-	lex.generate_grammar(file_path);  
+	lex.generate_lexerout(file_path);  
 	lex.lexer_output();
 	
-	
-	Parser pars(lex.get_grammar());
+	Parser pars(lex.get_lexerout());
 	AST_Node* root = pars.parse_code();
+
+	//print_tree(root);
+	//pars.run_code(root);
 	
-	for (auto &i : root->nodes) {
-		cout << i << endl;
-	}
-
-	print_tree(root);
-	// pars.run_code(root);
-
     return 0;
 }
 
