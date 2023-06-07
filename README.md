@@ -9,6 +9,7 @@ $ ./bin/g-- "file_path"
 
 ### Windows 
 ```
+$ git clone https://github.com/Pumukun/LGPP.git
 $ g++ -Wall -I include -c src/*.cpp -o obj/*.o
 $ g++ obj/*.o -o bin/g--
 $ cd bin
