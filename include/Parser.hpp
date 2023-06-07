@@ -11,6 +11,7 @@
 
 #include "AST.hpp"
 #include "Token.hpp"
+#include "Formula_Parser.hpp"
 
 using namespace std;
 
@@ -70,12 +71,13 @@ private:
 		cout << formula << "\n" << pos << endl;
 		pos++;
 		
-		char tmp_chr = formula[formula.size() - 1];
+		for (auto const &i : scope_int) {
+			int tmp_find = formula.find(i.first);
+			if (tmp_find != -1) {
+				formula[tmp_find] = static_cast<char>(i.second);
+			}
+		}
 
-		//while (tmp_chr != formula[0]) {
-			
-		//}
-		
 		Token res_token(INTEGER);
 		res_token.set_lexeme(formula);
 
@@ -90,7 +92,11 @@ private:
 	}
 
 	AST_Node* parse_var() {
-		
+		if (tokens[pos].get_type() == OPERATOR && tokens[pos].get_lexeme() != "-")
+			throw runtime_error("expected \"-\" on pos: " +  to_string(tokens[pos].get_pos()));
+		AST_Node* res = new AST_Node(tokens[pos]);
+		pos++;
+		return res;
 	}
 
 public:
@@ -100,19 +106,29 @@ public:
 
 		while (pos < (int)tokens.size()) {
 			if (match(VARIABLE).get_type() != END) {
+				string tmp_var = tokens[pos - 1].get_lexeme();
+
 				require(OPERATOR);
 				
-				pos--;
-				if (tokens[pos].get_lexeme() != "=")
+				
+				if (tokens[pos - 1].get_lexeme() != "=")
 					throw runtime_error("expected: = after variable! on position: " + to_string(tokens[pos].get_pos()));
-				pos++;
 
-				if (tokens[pos].get_lexeme() == "-")
+				if (tokens[pos].get_type() == INTEGER) {
+					string tmp_str = tokens[pos].get_lexeme();
+
+					AST_Node* f_node = new AST_Node();
+					if ((int)tmp_str.find("-") != -1 || (int)tmp_str.find("-") == 0 || (int)tmp_str.find("/") != -1 || (int)tmp_str.find("*") != -1) {
+						f_node = parse_var();
+						scope_int[tmp_var] = stoi(f_node->get_token().get_lexeme());
+					} else { f_node = parse_formula(); }
+
+					scope_int[tmp_var] = stoi(f_node->get_token().get_lexeme());
+					insert_right(root, f_node);
+				} else if (tokens[pos].get_type() == STRING) {
 					pos++;
-				
-				AST_Node* f_node = parse_formula();
-				
-				insert_right(root, f_node);
+					scope_str[tmp_var] = tokens[pos].get_lexeme();
+				}
 			}
 			
 			if (match(PRINT).get_type() != END) {

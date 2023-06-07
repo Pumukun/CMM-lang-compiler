@@ -61,7 +61,7 @@ AST_Node* insert_left(AST_Node* root, AST_Node* p_node) {
     }
     root->set_left_node(insert_left(root->get_left_node(), p_node));
 
-    return p_node;
+    return root;
 }
 
 AST_Node* insert_right(AST_Node* root, AST_Node* p_node) {
@@ -70,7 +70,7 @@ AST_Node* insert_right(AST_Node* root, AST_Node* p_node) {
 	}
 	root->set_right_node(insert_right(root->get_right_node(), p_node));
 
-	return p_node;
+	return root;
 }
 
 void print_tree(AST_Node* root, string prefix = "", bool is_left = true) {

@@ -27,7 +27,12 @@ int main(int argc, char** argv) {
 	Parser pars(lex.get_lexerout());
 	AST_Node* root = pars.parse_code();
 	
-	print_tree(root);
+	while (true) {
+		cout << *root << endl;
+		root = root->get_right_node();
+	}
+
+	//print_tree(root);
 	
     return 0;
 }
