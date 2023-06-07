@@ -16,6 +16,7 @@ private:
 	Token token;
 	AST_Node* left_node;
 	AST_Node* right_node;	
+	AST_Node* parent;
 
 public:
 
@@ -38,19 +39,39 @@ public:
 		nodes.push_back(p_node);
 	}
 	
-	void set_token(Token p_token) { p_token = token; }
-	void set_left_node(AST_Node* p_left_node) { p_left_node = left_node; }
-	void set_right_node(AST_Node* p_right_node) { p_right_node = right_node; }
+	void set_token(Token p_token) { token = p_token; }
+	void set_left_node(AST_Node* p_left_node) { left_node = p_left_node; }
+	void set_right_node(AST_Node* p_right_node) { right_node = p_right_node; }
+	void set_parent(AST_Node* p_parent) { parent = p_parent; }
 
 	Token get_token() { return token; }
 	AST_Node* get_left_node() { return left_node; }
-	AST_Node* get_right_node() { return right_node; }	
+	AST_Node* get_right_node() { return right_node; }
+	AST_Node* get_parent() { return parent; }
 
 	friend ostream &operator<< (ostream& out, AST_Node& node) {
 		out << node.token.get_lexeme() << endl;
 		return out;
 	}
 };
+
+AST_Node* insert_left(AST_Node* root, AST_Node* p_node) {
+    if (root == nullptr) {
+        return nullptr;
+    }
+    root->set_left_node(insert_left(root->get_left_node(), p_node));
+
+    return p_node;
+}
+
+AST_Node* insert_right(AST_Node* root, AST_Node* p_node) {
+	if (root == nullptr) {
+		return nullptr;
+	}
+	root->set_right_node(insert_right(root->get_right_node(), p_node));
+
+	return p_node;
+}
 
 void print_tree(AST_Node* root, string prefix = "", bool is_left = true) {
 	if (root == nullptr) {

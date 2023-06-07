@@ -180,7 +180,6 @@ public:
 			lexerout.push_back(token);
 		} while (token.get_lexeme() != "");
 
-		lexerout.pop_back();
 	}
 
 	void lexer_output() {

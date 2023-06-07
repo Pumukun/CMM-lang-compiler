@@ -48,7 +48,7 @@ private:
 	Token require(TokenType p_expected) {
 		const Token token = match(p_expected);
 		if (token.get_type() == END) { 
-			throw runtime_error("expected: " + TokenType_array[p_expected] + " on position: " + to_string(pos) + "\n");
+			throw runtime_error("expected: " + TokenType_array[p_expected] + " on position: " + to_string(tokens[pos].get_pos()) + "\n");
 		}
 		return token;
 	}
@@ -68,12 +68,24 @@ private:
 		}
 
 		cout << formula << "\n" << pos << endl;
-		pos += 2;	
-		return new AST_Node();
+		pos++;
+		
+		char tmp_chr = formula[formula.size() - 1];
+
+		//while (tmp_chr != formula[0]) {
+			
+		//}
+		
+		Token res_token(INTEGER);
+		res_token.set_lexeme(formula);
+
+		return new AST_Node(res_token);
 	}
 
 	AST_Node* parse_print() {
 		cout << "print " + tokens[pos].get_lexeme() << endl;
+		pos++;
+		require(SEMICOLON);
 		return new AST_Node(tokens[pos]);
 	}
 
@@ -92,68 +104,28 @@ public:
 				
 				pos--;
 				if (tokens[pos].get_lexeme() != "=")
-					throw runtime_error("expected: = after variable! on position: " + to_string(pos));
+					throw runtime_error("expected: = after variable! on position: " + to_string(tokens[pos].get_pos()));
 				pos++;
 
 				if (tokens[pos].get_lexeme() == "-")
 					pos++;
 				
-				parse_formula();
+				AST_Node* f_node = parse_formula();
+				
+				insert_right(root, f_node);
 			}
 			
 			if (match(PRINT).get_type() != END) {
 				if (tokens[pos].get_type() == VARIABLE || tokens[pos].get_type() == INTEGER || tokens[pos].get_type() == STRING)
 					parse_print();
-				throw runtime_error("expected: VAR || INT || STR after print!");
+				else throw runtime_error("expected: VAR || INT || STR after print!");
 			}
+
+			if (tokens[pos].get_type() == END) return root;
 		}
 
 		return root;
 	}
-	/*	
-	AST_Node* run_code(auto p_node) {
-		ifstream in("prog.txt");
-		string result;
-		if (in.is_open()) {
-			if(typeid(p_node) == typeid(Number_Node)) {
-				in << p_node << endl;
-			}
-			if (typeid(p_node) == typeid(Unar_oper_Node)) {
-				switch (p_node.oper.get_type()) {
-					case PRINT: 
-						in << "std::cout << "<< (p_node.oper.get_lexeme());
-					default:
-						break;
-				}
-			} 
-			if (typeid(p_node) == typeid(Binary_oper_Node)) {
-				string cur_lex = p_node.oper.get_lexeme();
-				AST_Node result;
-				if (cur_lex == "+") {
-					result = run_code(p_node.left_node + p_node.right_node);
-					in << result << endl;
-				}
-				if (cur_lex == "-") {
-					result = run_code(p_node.left_node - p_node.right_node);
-					in << result << endl;
-				}
-				if (cur_lex == "=") {
-					const AST_Node* right_result = run_code(p_node.right_node);
-					const AST_Node* variablenode = p_node.get_left_node();
-					result = right_result = variablenode;
-					in << result << endl;
-				}
-				if (scope(cur_lex)) {
-					scope(cur_lex);
-				} else cout << "variable not exist" << endl;
-
-				for (auto&i:p_node.MyNode) { run_code(i); }
-			}
-
-		in.close();
-		}
-	}
-	*/
 };
 
 #endif

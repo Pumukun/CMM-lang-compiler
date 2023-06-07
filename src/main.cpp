@@ -26,9 +26,8 @@ int main(int argc, char** argv) {
 	
 	Parser pars(lex.get_lexerout());
 	AST_Node* root = pars.parse_code();
-
-	//print_tree(root);
-	//pars.run_code(root);
+	
+	print_tree(root);
 	
     return 0;
 }
