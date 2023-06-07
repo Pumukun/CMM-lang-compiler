@@ -11,4 +11,6 @@ $ ./bin/g-- "file_path"
 ```
 $ g++ -Wall -I include -c src/*.cpp -o obj/*.o
 $ g++ obj/*.o -o bin/g--
+$ cd bin
+$ g-- "file_path"
 ```
