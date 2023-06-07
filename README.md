@@ -14,3 +14,8 @@ $ g++ obj/*.o -o bin/g--
 $ cd bin
 $ g-- "file_path"
 ```
+
+# Наша команда
+- [Демченко Григорий](https://github.com/Pumukun)
+- [Михаил Кудряшов](https://github.com/wayflayer)
+- [Валентин Лиховид](https://github.com/Valentino-Torrantino)
