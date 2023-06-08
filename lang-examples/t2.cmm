@@ -1,3 +1,5 @@
 str = "Hello World!";
-string str2 = "C-- xd";
-print s;
+print str;
+
+str2 = "C-- xd";
+print str2;
