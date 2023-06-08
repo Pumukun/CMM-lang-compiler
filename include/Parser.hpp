@@ -41,7 +41,6 @@ private:
 				return cur_Token;
 			}
 		}
-
 		return Token(END);
 	}
 
@@ -107,7 +106,7 @@ public:
 			if (match(VARIABLE).get_type() != END) {
 				string tmp_var = tokens[pos - 1].get_lexeme();
 
-				require(OPERATOR);
+				require(ASSIGN);
 				
 				
 				if (tokens[pos - 1].get_lexeme() != "=")

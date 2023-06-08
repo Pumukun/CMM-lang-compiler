@@ -111,7 +111,10 @@ private:
 					pos++;
 				}
 
-				token.set_type(OPERATOR);
+				if (lexeme == "=") {
+					token.set_type(ASSIGN);
+				} else { token.set_type(OPERATOR); }
+
 				token.set_lexeme(lexeme);
 				token.set_pos(pos - (int)lexeme.size());
 				token.set_line(line);

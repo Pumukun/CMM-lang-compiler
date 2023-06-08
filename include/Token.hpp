@@ -12,12 +12,17 @@ enum TokenType {
 	INTEGER,		// 2
 	STRING,			// 3
 	OPERATOR,		// 4
-	PUNCTUATION,	// 5
-	SEMICOLON,		// 6
-	END				// 7
+	ASSIGN,			// 5
+	PUNCTUATION,	// 6
+	SEMICOLON,		// 7
+	END				// 8
 };
 
-vector<string> TokenType_array = {"PRINT", "VARIABLE", "INTEGER", "STRING", "OPERATOR", "PUNCTUATION", "SEMICOLON", "END"};
+vector<string> TokenType_array = {
+	"PRINT", "VARIABLE", "INTEGER", 
+	"STRING", "OPERATOR", "ASSIGN", 
+	"PUNCTUATION", "SEMICOLON", "END"
+};
 
 class Token {
 private:
