@@ -1,4 +1,4 @@
-# LGPP. C** language and compiler
+# C** (C multiply multiply) language and compiler
 ## Build
 ### Linux
 ```
